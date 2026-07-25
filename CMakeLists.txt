@@ -9,7 +9,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 
-add_executable(main
+add_executable(snake
     main.c
     game.c
     protocols/xdg-shell-protocol.c
