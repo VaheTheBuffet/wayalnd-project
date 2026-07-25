@@ -104,8 +104,8 @@ void update_lose(Game *game)
     //check bounds
     IVec2 head_location = game->snake[game->snake_len - 1];
     if (
-        head_location.x == -1 || head_location.x == game->board_width
-        ||head_location.y == -1 || head_location.y == game->board_height
+        head_location.x > 0xF0 || head_location.x == game->board_width
+        ||head_location.y > 0xF0 || head_location.y == game->board_height
     ){
 
         game->running = false;

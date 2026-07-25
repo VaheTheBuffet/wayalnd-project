@@ -129,7 +129,7 @@ static void keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, in
     xkb_state_unref(key_state);
     key_state = xkb_state_new(keymap);
     
-    munmap(keymap_str, size);
+    munmap((void *)keymap_str, size);
     close(fd);
 
 }
@@ -230,10 +230,10 @@ static void draw_frame()
     for(int segment = 0; segment < GAME->snake_len; segment++) {
         fill_rec(
             ctx, 
-            GAME->snake[segment].x * WIDTH / GAME->board_width, 
-            GAME->snake[segment].y * HEIGHT / GAME->board_height, 
-            WIDTH / GAME->board_width, 
-            HEIGHT / GAME->board_height,
+            (float)(GAME->snake[segment].x) * WIDTH / GAME->board_width, 
+            (float)(GAME->snake[segment].y) * HEIGHT / GAME->board_height, 
+            (float)(WIDTH) / GAME->board_width, 
+            (float)(HEIGHT) / GAME->board_height,
             0xFFAABBCC
         );
     }
@@ -246,17 +246,16 @@ static void draw_frame()
 
         fill_rec(
             ctx,
-            GAME->apples[apple].x * WIDTH / GAME->board_width,
-            GAME->apples[apple].y * HEIGHT / GAME->board_height,
-            WIDTH / GAME->board_width,
-            HEIGHT / GAME->board_height,
+            (float)(GAME->apples[apple].x) * WIDTH / GAME->board_width,
+            (float)(GAME->apples[apple].y) * HEIGHT / GAME->board_height,
+            (float)(WIDTH) / GAME->board_width,
+            (float)(HEIGHT) / GAME->board_height,
             0xFF0000FF
         );
     }
 
 
-    wl_surface_attach(surface, buffer, 0, 0);
-    wl_surface_damage(surface, 0, 0, WIDTH, HEIGHT);
+    wl_surface_attach(surface, buffer, 0, 0); wl_surface_damage(surface, 0, 0, WIDTH, HEIGHT);
     wl_surface_commit(surface);
 
     //reset the semaphore which gets signalled by the release event 
@@ -308,10 +307,12 @@ int main(int argc, char *argv[])
 
     xdg_surface = xdg_wm_base_get_xdg_surface(xdg_wm_base, surface);
     xdg_surface_add_listener(xdg_surface, &xdg_surface_listener, NULL);
-    xdg_surface_set_window_geometry(xdg_surface, 0, 0, WIDTH, HEIGHT);
 
     toplevel = xdg_surface_get_toplevel(xdg_surface);
     xdg_toplevel_set_title(toplevel, "Snake Game");
+    wl_surface_commit(surface);
+
+    xdg_surface_set_window_geometry(xdg_surface, 0, 0, WIDTH, HEIGHT);
 
     wl_display_roundtrip(display);
 
